@@ -51,6 +51,11 @@ $response = $router->dispatchFromGlobals();
 $response->send();
 ```
 
+## Documentação
+- [Guia completo: instalação e uso](docs/guia-completo.md)
+- [Publicação automática no Packagist](docs/publicacao-packagist.md)
+- [Referência de middlewares](docs/middleware.md)
+
 ## Testes
 ```bash
 composer install

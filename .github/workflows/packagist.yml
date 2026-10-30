@@ -1,0 +1,45 @@
+name: Atualizar Packagist
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  packagist:
+    name: Notificar Packagist
+    runs-on: ubuntu-latest
+
+    env:
+      PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
+      PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
+      PACKAGE_REPOSITORY: https://github.com/valtercoutojunior/bebel-router
+
+    steps:
+      - name: Verificar credenciais
+        id: credentials
+        run: |
+          if [ -n "$PACKAGIST_USERNAME" ] && [ -n "$PACKAGIST_API_TOKEN" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Configure os secrets PACKAGIST_USERNAME e PACKAGIST_API_TOKEN para atualizar o Packagist automaticamente."
+          fi
+
+      - name: Solicitar atualização
+        if: steps.credentials.outputs.configured == 'true'
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --retry 3 \
+            --retry-delay 5 \
+            --max-time 30 \
+            --request POST \
+            --header "Content-Type: application/json" \
+            --data "{\"repository\":{\"url\":\"${PACKAGE_REPOSITORY}\"}}" \
+            "https://packagist.org/api/update-package?username=${PACKAGIST_USERNAME}&apiToken=${PACKAGIST_API_TOKEN}"

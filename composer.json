@@ -11,6 +11,11 @@
     "middleware",
     "psr-4"
   ],
+  "homepage": "https://github.com/valtercoutojunior/bebel-router",
+  "support": {
+    "issues": "https://github.com/valtercoutojunior/bebel-router/issues",
+    "source": "https://github.com/valtercoutojunior/bebel-router"
+  },
   "authors": [
     {
       "name": "Valter Couto Santos Junior",
@@ -37,7 +42,7 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "stan": "vendor/bin/phpstan analyse src tests --level=max"
+    "stan": "vendor/bin/phpstan analyse src tests --level=max --memory-limit=512M"
   },
   "config": {
     "sort-packages": true
