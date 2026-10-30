@@ -191,27 +191,12 @@ final class Router
     {
         $this->groupStack[] = $attributes;
         $this->currentGroupStack[] = $attributes;
-        $start = $this->routes->count();
 
         try {
             $callback($this);
         } finally {
             array_pop($this->groupStack);
             array_pop($this->currentGroupStack);
-        }
-
-        if (isset($attributes['as']) && is_string($attributes['as']) && $attributes['as'] !== '') {
-            $prefix = $attributes['as'];
-            $routes = $this->routes->getRoutes();
-            $total = count($routes);
-
-            for ($i = $start; $i < $total; $i++) {
-                $route = $routes[$i];
-                $currentName = $route->getName();
-                if (is_string($currentName) && $currentName !== '') {
-                    $route->name($prefix . $currentName);
-                }
-            }
         }
     }
 
@@ -225,6 +210,17 @@ final class Router
         if ($this->groupStack !== []) {
             $group = new RouteGroup();
             $group->merge($route, $this->groupStack);
+
+            $namePrefix = '';
+            foreach ($this->groupStack as $groupAttributes) {
+                if (isset($groupAttributes['as']) && is_string($groupAttributes['as'])) {
+                    $namePrefix .= $groupAttributes['as'];
+                }
+            }
+
+            if ($namePrefix !== '') {
+                $route->setNamePrefix($namePrefix);
+            }
         }
 
         $this->routes->add($route);

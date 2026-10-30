@@ -13,6 +13,7 @@ final class Route
     /** @var array<int, string|callable|object> */
     private array $middleware = [];
     private ?string $name = null;
+    private string $namePrefix = '';
     /** @var array<string, string> */
     private array $wheres = [];
     /** @var null|callable(Route, string): void */
@@ -84,16 +85,24 @@ final class Route
         return $this->middleware;
     }
 
+    public function setNamePrefix(string $prefix): self
+    {
+        $this->namePrefix = $prefix;
+        return $this;
+    }
+
     /**
      * @param string $name
      * @return $this
      */
     public function name(string $name): self
     {
+        $fullName = $this->namePrefix . $name;
+
         if ($this->onNameChange !== null) {
-            ($this->onNameChange)($this, $name);
+            ($this->onNameChange)($this, $fullName);
         }
-        $this->name = $name;
+        $this->name = $fullName;
         return $this;
     }
 
